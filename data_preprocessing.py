@@ -5,11 +5,12 @@ import json
 import math
 import numpy as np
 import os
+import argparse
 
-def create_dataset(n_mfcc=20,hop_length=512,n_fft=2048,num_of_segments=5): 
+def create_dataset(n_mfcc=20,hop_length=512,n_fft=2048,num_of_segments=5,path='/content/Music-Genre-Classifier/genres'): 
   
   
-  DIR_PATH = '.'                                
+  DIR_PATH = path                              
 
   SAMPELING_RATE = 22050
   data = {
@@ -20,7 +21,7 @@ def create_dataset(n_mfcc=20,hop_length=512,n_fft=2048,num_of_segments=5):
 
   folder_list = []
   for files in os.listdir(DIR_PATH):
-    if files[-3:]!=".mf":
+    if "."not in str(files):
       folder_list.append(files)
 
   for folder in folder_list:
@@ -46,10 +47,18 @@ def create_dataset(n_mfcc=20,hop_length=512,n_fft=2048,num_of_segments=5):
           data["MFCCs"].append(mfcc.tolist())
           data["label"].append(data["mapping"].index(folder))
           print("{}, segment:{}".format(file_path, segment+1))
-        
-  save_path = os.path.join(DIR_PATH,"data.json")
+      break 
+  save_path = os.path.join(DIR_PATH,"..","data.json")
   with open(save_path, "w") as fp:
     json.dump(data, fp, indent=4)
   return data
-      
-data = create_dataset()
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument('-path', action='store', type=str,
+                    help='Path of the music folder')
+
+results = parser.parse_args()
+
+
+data = create_dataset(path=results.path)
