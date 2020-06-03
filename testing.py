@@ -5,6 +5,8 @@ import argparse
 import json
 import statistics
 import librosa
+import numpy as np
+import math
 
 def preprocessing(music_path,n_mfcc=20,hop_length=512,n_fft=2048,num_of_segments=5,SAMPELING_RATE=22050):
     
@@ -45,7 +47,7 @@ def predict(model,mfccs):
     pred = []
     
     for mfcc in mfccs:
-        prediction = model.predict(x_test[i].reshape(-1,20,259,1)))
+        prediction = model.predict(mfcc.reshape(-1,20,259,1))
         pred.append(np.argmax(prediction))
 
     final_pred = statistics.mode(pred)
